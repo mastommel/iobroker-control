@@ -22,6 +22,7 @@ class IoBrokerStateResolverServiceProvider extends ServiceProvider
         $this->app->bind(HttpStateResolver::class, function (Application $app) {
             return new HttpStateResolver(
                 $app->make(IoBrokerClientInterface::class),
+                $app->make('events'),
                 20
             );
         });

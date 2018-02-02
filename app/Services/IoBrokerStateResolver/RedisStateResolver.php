@@ -43,8 +43,8 @@ class RedisStateResolver extends StateResolver
 
         if (count($states) === count($results)) {
             foreach ($results as $index => $data) {
-                if ($data) {
-                    $result->addResolved($states[$index], $data);
+                if (isset($data)) {
+                    $result->addResolved($states[$index], unserialize($data));
                 } else {
                     $result->addUnresolved($states[$index]);
                 }

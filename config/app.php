@@ -183,6 +183,7 @@ return [
         App\Providers\IoBrokerStateResolverServiceProvider::class,
         App\Providers\IoBrokerStateBuilderProvider::class,
         App\Providers\TransferBuilderProvider::class,
+        App\Providers\CacheIoBrokerStateServiceProvider::class
     ],
 
     /*
