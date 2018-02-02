@@ -42,5 +42,7 @@ Create an iobroker.php config like the following:
                 'STATE' => '.1.STATE',
             ]
         ],
+          
+        'redis_ttl' => '600'
     
     ];
