@@ -17,5 +17,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/state', 'Api\StateChangedController@index')
-    ->name('api.state_changed');
+Route::namespace('Api')->group(function () {
+    Route::post('/state', 'StateChangedController@index')
+        ->name('api.state_changed');
+
+    Route::get('/devices', 'DevicesController@index')
+        ->name('api.devices.index');
+
+    Route::post('/state/update', 'StateController@update')
+        ->name('api.state.update');
+});

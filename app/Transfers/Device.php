@@ -2,75 +2,54 @@
 
 namespace App\Transfers;
 
-class Device
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+
+class Device implements Jsonable, Arrayable
 {
     /**
      * @var string
      */
-    private $name;
+    public $name;
 
     /**
      * @var string
      */
-    private $id;
+    public $id;
 
     /**
-     * @var States[]
+     * @var string
      */
-    private $states = [];
+    public $type;
 
     /**
-     * @return string
+     * @var State[]
      */
-    public function getName(): ?string
+    public $states = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toJson($options = 0)
     {
-        return $this->name;
+        return json_encode($this->toArray());
     }
 
     /**
-     * @param string $name
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function setName(string $name)
+    public function toArray()
     {
-        $this->name = $name;
-    }
+        $states = [];
+        foreach ($this->states as $state) {
+            $states[$state->name] = $state->toArray();
+        }
 
-    /**
-     * @return string
-     */
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return void
-     */
-    public function setId(string $id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return States[]
-     */
-    public function getStates(): array
-    {
-        return $this->states;
-    }
-
-    /**
-     * @param string $name
-     * @param State $state
-     *
-     * @return void
-     */
-    public function addState(string $name, State $state)
-    {
-        $this->states[$name] = $state;
+        return [
+            'name' => $this->name,
+            'id' => $this->id,
+            'type' => $this->type,
+            'states' => $states,
+        ];
     }
 }

@@ -34,10 +34,6 @@ class CacheIoBrokerState
      */
     public function handle(IoBrokerStateFound $event)
     {
-        $this->redis->set($event->getStateId(),
-            serialize($event->getValue()),
-            'EX',
-            $this->ttl
-        );
+        $this->redis->set($event->stateId, serialize($event->value), 'EX', $this->ttl);
     }
 }

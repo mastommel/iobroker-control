@@ -24,7 +24,7 @@ class CacheIoBrokerStateServiceProvider extends ServiceProvider
         $this->app->bind(CacheIoBrokerState::class, function (Application $app) {
            return new CacheIoBrokerState(
                $app->make(RedisManager::class),
-               config('iobroker.redis_ttl')
+               config('iobroker.redis.ttl')
            );
         });
     }

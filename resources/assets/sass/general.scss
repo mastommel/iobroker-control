@@ -1,0 +1,14 @@
+html,
+body {
+  height: 100%;
+  background-color: $body-background;
+  color: $foreground-color;
+}
+
+.bigger {
+  font-size: 1.4em;
+}
+
+.warning, .alert {
+  color: $color-warning;
+}

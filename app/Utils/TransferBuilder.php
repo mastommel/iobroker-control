@@ -10,7 +10,7 @@ class TransferBuilder implements TransferBuilderInterface
     /**
      * @var array
      */
-    private $allDeviceIds;
+    private $allDevices;
 
     /**
      * @var array
@@ -38,17 +38,21 @@ class TransferBuilder implements TransferBuilderInterface
             $deviceId = join('.', [$parts[0], $parts[1], $parts[2]]);
             $device = $devices[$deviceId] ?? new Device();
 
-            if (!$device->getId() || !$device->getName()) {
-                $device->setId($deviceId);
-                $device->setName($allDevices[$deviceId] ?? '');
+            if (!$device->id || !$device->name || !$device->type) {
+                $device->id = $deviceId;
+                if (isset($allDevices[$deviceId]['name'], $allDevices[$deviceId]['type'])) {
+                    $device->name = $allDevices[$deviceId]['name'];
+                    $device->type = $allDevices[$deviceId]['type'];
+                }
+
                 $devices[$deviceId] = $device;
             }
 
             $state = new State();
-            $state->setName($parts[count($parts)-1]);
-            $state->setId($id);
-            $state->setValue($value);
-            $device->addState($state->getName(), $state);
+            $state->name = $parts[count($parts)-1];
+            $state->id = $id;
+            $state->value = $value;
+            $device->states[$state->name] = $state;
         }
 
         return $devices;
@@ -59,13 +63,18 @@ class TransferBuilder implements TransferBuilderInterface
      */
     private function getAllDevices(): array
     {
-        if (!count($this->allDeviceIds)) {
-            $this->allDeviceIds = [];
+        if (!count($this->allDevices)) {
+            $this->allDevices = [];
             foreach ($this->config['device_categories'] as $category) {
-                $this->allDeviceIds = array_merge($this->allDeviceIds, $this->config['devices'][$category]);
+                foreach ($this->config['devices'][$category] as $id => $name) {
+                    $this->allDevices[$id] = [
+                        'name' => $name,
+                        'type' => $category,
+                    ];
+                }
             }
         }
 
-        return $this->allDeviceIds;
+        return $this->allDevices;
     }
 }

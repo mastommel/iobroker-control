@@ -2,34 +2,36 @@
 
 namespace App\Services;
 
+use App\Transfers\Device;
+
 interface IoBrokerServiceInterface
 {
     /**
-     * @return array
+     * @return Device[]
      */
     public function getAllDevicesStates(): array;
 
     /**
-     * @return array
+     * @return Device[]
      */
     public function getHeatingStates(): array;
 
     /**
-     * @return array
+     * @return Device[]
      */
     public function getWindowStates(): array;
 
     /**
      * @param string $stateId
      *
-     * @return array
+     * @return Device[]
      */
     public function getState(string $stateId): array;
 
     /**
      * @param string $deviceId
      *
-     * @return array
+     * @return Device[]
      */
     public function getDevice(string $deviceId): array;
 }

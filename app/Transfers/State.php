@@ -2,74 +2,43 @@
 
 namespace App\Transfers;
 
-class State
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+
+class State implements Jsonable, Arrayable
 {
     /**
      * @var string
      */
-    private $name;
+    public $name;
 
     /**
      * @var string
      */
-    private $id;
+    public $id;
 
     /**
      * @var mixed
      */
-    private $value;
+    public $value;
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function getName(): string
+    public function toJson($options = 0)
     {
-        return $this->name;
+        return json_encode($this->toArray());
     }
 
     /**
-     * @param string $name
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function setName(string $name)
+    public function toArray()
     {
-        $this->name = $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return void
-     */
-    public function setId(string $id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @return void
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
+        return [
+            'name' => $this->name,
+            'id' => $this->id,
+            'value' => $this->value,
+        ];
     }
 }

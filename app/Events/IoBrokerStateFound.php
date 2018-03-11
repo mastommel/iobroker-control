@@ -2,17 +2,20 @@
 
 namespace App\Events;
 
-class IoBrokerStateFound
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+
+class IoBrokerStateFound implements ShouldBroadcast
 {
     /**
      * @var string
      */
-    private $stateId;
+    public $stateId;
 
     /**
-     * @var mixed
+     * @var string
      */
-    private $value;
+    public $value;
 
     /**
      * @param string $stateId
@@ -25,38 +28,12 @@ class IoBrokerStateFound
     }
 
     /**
-     * @return string
-     */
-    public function getStateId(): string
-    {
-        return $this->stateId;
-    }
-
-    /**
-     * @param string $stateId
+     * Get the channels the event should broadcast on.
      *
-     * @return void
+     * @return Channel
      */
-    public function setStateId(string $stateId)
+    public function broadcastOn()
     {
-        $this->stateId = $stateId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @return void
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
+        return new Channel('state.updated');
     }
 }
