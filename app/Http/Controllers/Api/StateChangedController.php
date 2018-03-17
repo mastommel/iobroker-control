@@ -45,7 +45,7 @@ class StateChangedController extends Controller
      *
      * @return bool
      */
-    private function updateIsRelevant(?string $state, ?string $value): bool
+    private function updateIsRelevant(string $state, string $value): bool
     {
         if (isset($state, $value)) {
             $parts = explode('.', $state);
@@ -62,7 +62,7 @@ class StateChangedController extends Controller
     /**
      * @return void
      */
-    private function init(): void
+    private function init()
     {
         foreach (config('iobroker.device_categories') as $category) {
             foreach (array_keys(config('iobroker.devices.' . $category)) as $deviceId) {

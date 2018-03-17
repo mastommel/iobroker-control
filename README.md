@@ -18,11 +18,11 @@ Create an iobroker.php config like the following:
     
         'devices' => [
             'heating' => [
-                'hm-rpc.0.000xxxxxxxxxxx' => 'Heizkörper Büro',
+                'hm-rpc.0.000xxxxxxxxxxx' => 'Heater Office',
             ],
     
             'windows' => [
-                'hm-rpc.0.000xxxxxxxxxxx' => 'Fensterkontakt Büro/Bücherregal',
+                'hm-rpc.0.000xxxxxxxxxxx' => 'Window contact Office',
             ]
         ],
     
@@ -42,7 +42,26 @@ Create an iobroker.php config like the following:
                 'STATE' => '.1.STATE',
             ]
         ],
-          
-        'redis_ttl' => '600'
+        
+        'virtual_devices' => [             // whole scene id could be: some.scene.id.part.normal_mode
+            'some.scene.id.part' => [     // part of state id before last dot
+                'label' => 'Scene 123',
+                'states' => [
+                    'normal_mode' => [    // part of state id after last dot
+                        'label' => 'Heater mode',
+                        'key' => 'MODE',
+                    ],
+                    'trigger_on_off' => [
+                        'label' => 'Heater on/off',
+                        'key' => 'TRIGGER_ON_OFF'
+                    ]
+                ]
+            ],
+        ],
+        
+        'redis' => [
+            'ttl' => '600',
+            'key_prefix' => ''
+        ],
     
     ];

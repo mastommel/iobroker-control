@@ -21,6 +21,11 @@ interface IoBrokerStateBuilderInterface
     /**
      * @return array
      */
+    public function buildVirtualStates(): array;
+
+    /**
+     * @return array
+     */
     public function buildAllStates(): array;
 
     /**

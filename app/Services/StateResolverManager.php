@@ -12,7 +12,7 @@ class StateResolverManager implements StateResolverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function addResolver(IoBrokerStateResolverInterface $resolver): void
+    public function addResolver(IoBrokerStateResolverInterface $resolver)
     {
         if (!in_array($resolver, $this->resolvers, true)) {
             $this->resolvers[] = $resolver;

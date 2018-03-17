@@ -22,6 +22,11 @@ interface IoBrokerServiceInterface
     public function getWindowStates(): array;
 
     /**
+     * @return Device[]
+     */
+    public function getVirtualStates(): array;
+
+    /**
      * @param string $stateId
      *
      * @return Device[]

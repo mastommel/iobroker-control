@@ -48,12 +48,29 @@ class IoBrokerStateBuilder implements IoBrokerStateBuilderInterface
     /**
      * {@inheritdoc}
      */
+    public function buildVirtualStates(): array
+    {
+        $states = [];
+        foreach ($this->config['virtual_devices'] as $deviceId => $config) {
+            foreach ($config['states'] as $stateId => $stateConfig) {
+                $states[$deviceId][$stateConfig['key']] = $deviceId . '.' . $stateId;
+            }
+        }
+
+        return $states;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function buildAllStates(): array
     {
         $states = [];
         foreach ($this->config['device_categories'] as $category) {
             $states = array_merge($states, $this->buildStatesByCategory($category));
         }
+
+        $states = array_merge($states, $this->buildVirtualStates());
 
         return $states;
     }
@@ -96,7 +113,7 @@ class IoBrokerStateBuilder implements IoBrokerStateBuilderInterface
      *
      * @return null|string
      */
-    private function getCategoryByDeviceId(string $deviceId): ?string
+    private function getCategoryByDeviceId(string $deviceId): string
     {
         foreach ($this->config['devices'] as $category => $ids) {
             foreach ($ids as $id) {
@@ -106,6 +123,6 @@ class IoBrokerStateBuilder implements IoBrokerStateBuilderInterface
             }
         }
 
-        return null;
+        return '';
     }
 }

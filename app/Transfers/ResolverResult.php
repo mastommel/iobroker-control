@@ -28,7 +28,7 @@ class ResolverResult
      *
      * @return void
      */
-    public function addResolved(string $key, $value): void
+    public function addResolved(string $key, $value)
     {
         $this->resolved[$key] = $value;
     }
@@ -38,7 +38,7 @@ class ResolverResult
      *
      * @return void
      */
-    public function addUnresolved(string $key): void
+    public function addUnresolved(string $key)
     {
         $this->unresolved[] = $key;
     }

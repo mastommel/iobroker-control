@@ -9,7 +9,7 @@ interface StateResolverManagerInterface
      *
      * @return void
      */
-    public function addResolver(IoBrokerStateResolverInterface $resolver): void;
+    public function addResolver(IoBrokerStateResolverInterface $resolver);
 
     /**
      * @param array $states

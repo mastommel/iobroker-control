@@ -69,6 +69,19 @@ class IoBrokerService implements IoBrokerServiceInterface
     /**
      * {@inheritdoc}
      */
+    public function getVirtualStates(): array
+    {
+        $states = $this->stateBuilder->buildVirtualStates();
+        $result = $this->resolverManager->resolve(
+            $this->stateBuilder->flattenStates($states)
+        );
+
+        return $this->transferBuilder->buildTransfers($result);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getState(string $stateId): array
     {
         return $this->transferBuilder->buildTransfers($this->resolverManager->resolve([$stateId]));

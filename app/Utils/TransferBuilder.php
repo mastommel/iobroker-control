@@ -30,32 +30,51 @@ class TransferBuilder implements TransferBuilderInterface
      */
     public function buildTransfers(array $states): array
     {
-        $allDevices = $this->getAllDevices();
         $devices = [];
 
         foreach ($states as $id => $value) {
-            $parts = explode('.', $id);
-            $deviceId = join('.', [$parts[0], $parts[1], $parts[2]]);
-            $device = $devices[$deviceId] ?? new Device();
-
-            if (!$device->id || !$device->name || !$device->type) {
-                $device->id = $deviceId;
-                if (isset($allDevices[$deviceId]['name'], $allDevices[$deviceId]['type'])) {
-                    $device->name = $allDevices[$deviceId]['name'];
-                    $device->type = $allDevices[$deviceId]['type'];
-                }
-
-                $devices[$deviceId] = $device;
+            if ($this->isVirtualDevice($id)) {
+                $this->buildVirtualDeviceTransfer($id, $value, $devices);
+            } else {
+                $this->buildPhysicalDeviceTransfer($id, $value, $devices);
             }
-
-            $state = new State();
-            $state->name = $parts[count($parts)-1];
-            $state->id = $id;
-            $state->value = $value;
-            $device->states[$state->name] = $state;
         }
 
         return $devices;
+    }
+
+    private function buildPhysicalDeviceTransfer(string $id, $value, array &$devices)
+    {
+        $parts = explode('.', $id);
+        $deviceId = join('.', [$parts[0], $parts[1], $parts[2]]);
+        $device = $this->setDevice($deviceId, $devices);
+
+        $state = new State();
+        $state->name = $parts[count($parts)-1];
+        $state->id = $id;
+        $state->value = $value;
+        $device->states[$state->name] = $state;
+    }
+
+    /**
+     * @param string $id
+     * @param mixed $value
+     * @param array $devices
+     *
+     * @return void
+     */
+    private function buildVirtualDeviceTransfer(string $id, $value, array &$devices)
+    {
+        $parts = explode('.', $id);
+        $stateId = array_pop($parts);
+        $deviceId = join('.', $parts);
+        $device = $this->setDevice($deviceId, $devices);
+
+        $state = new State();
+        $state->id = $id;
+        $state->name = $this->getAllDevices()[$deviceId]['states'][$stateId]['key'] ?? '';
+        $state->value = $value;
+        $device->states[$state->name] = $state;
     }
 
     /**
@@ -73,8 +92,53 @@ class TransferBuilder implements TransferBuilderInterface
                     ];
                 }
             }
+
+            foreach ($this->config['virtual_devices'] as $id => $config) {
+                $this->allDevices[$id] = [
+                    'name' => $config['label'],
+                    'type' => 'virtual_devices',
+                    'states' => $config['states'],
+                ];
+            }
         }
 
         return $this->allDevices;
+    }
+
+    /**
+     * @param string $deviceId
+     * @param array $devices
+     *
+     * @return Device
+     */
+    private function setDevice(string $deviceId, array &$devices): Device
+    {
+        $allDevices = $this->getAllDevices();
+        $device = $devices[$deviceId] ?? new Device();
+
+        if (!$device->id || !$device->name || !$device->type) {
+            $device->id = $deviceId;
+            if (isset($allDevices[$deviceId]['name'], $allDevices[$deviceId]['type'])) {
+                $device->name = $allDevices[$deviceId]['name'];
+                $device->type = $allDevices[$deviceId]['type'];
+            }
+
+            $devices[$deviceId] = $device;
+        }
+
+        return $device;
+    }
+
+    /**
+     * @param string $stateId
+     *
+     * @return bool
+     */
+    private function isVirtualDevice(string $stateId): bool
+    {
+        $parts = explode('.', $stateId);
+        array_pop($parts);
+
+        return array_key_exists(join('.', $parts), $this->config['virtual_devices']);
     }
 }
