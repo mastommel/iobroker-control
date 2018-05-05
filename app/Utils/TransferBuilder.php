@@ -72,7 +72,8 @@ class TransferBuilder implements TransferBuilderInterface
 
         $state = new State();
         $state->id = $id;
-        $state->name = $this->getAllDevices()[$deviceId]['states'][$stateId]['key'] ?? '';
+//        $state->name = $this->getAllDevices()[$deviceId]['states'][$stateId]['key'] ?? '';
+        $state->name = $stateId;
         $state->value = $value;
         $device->states[$state->name] = $state;
     }
@@ -85,9 +86,10 @@ class TransferBuilder implements TransferBuilderInterface
         if (!count($this->allDevices)) {
             $this->allDevices = [];
             foreach ($this->config['device_categories'] as $category) {
-                foreach ($this->config['devices'][$category] as $id => $name) {
+                foreach ($this->config['devices'][$category] as $id => $config) {
                     $this->allDevices[$id] = [
-                        'name' => $name,
+                        'name' => $config['name'],
+                        'system_name' => $config['system_name'],
                         'type' => $category,
                     ];
                 }
@@ -98,6 +100,7 @@ class TransferBuilder implements TransferBuilderInterface
                     'name' => $config['label'],
                     'type' => 'virtual_devices',
                     'states' => $config['states'],
+                    'system_name' => $config['system_name'],
                 ];
             }
         }
@@ -121,6 +124,7 @@ class TransferBuilder implements TransferBuilderInterface
             if (isset($allDevices[$deviceId]['name'], $allDevices[$deviceId]['type'])) {
                 $device->name = $allDevices[$deviceId]['name'];
                 $device->type = $allDevices[$deviceId]['type'];
+                $device->systemName = $allDevices[$deviceId]['system_name'];
             }
 
             $devices[$deviceId] = $device;

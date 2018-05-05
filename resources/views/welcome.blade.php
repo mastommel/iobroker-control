@@ -12,24 +12,12 @@
     </head>
     <body>
         <div id="app">
-            <div class="container-fluid">
-                <div class="row">
-                    <div v-for="heater in heating" class="col-sm-2">
-                        <heater :data="heater" v-on:temperaturechange="updateTemperature"></heater>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div v-for="window in windows" class="col-sm-2">
-                        <window :data="window"></window>
-                    </div>
-                </div>
-
-                {{--<open-windows :data="windows"></open-windows>--}}
-            </div>
+            <dashboard :heating="heating"
+                       :windows="windows"
+                       :virtuals="virtuals"
+                       v-on:temperaturechange="updateTemperature">
+            </dashboard>
         </div>
-
-
 
         <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script>
         <script src="{{ asset('js/app.js') }}"></script>

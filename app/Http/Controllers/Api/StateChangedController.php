@@ -18,10 +18,21 @@ class StateChangedController extends Controller
     /**
      * @var array
      */
+    private $virtualDevices = [];
+
+    /**
+     * @var array
+     */
+    private $config = [];
+
+    /**
+     * @var array
+     */
     private $states = [];
 
     public function __construct()
     {
+        $this->config = config('iobroker');
         $this->init();
     }
 
@@ -48,12 +59,44 @@ class StateChangedController extends Controller
     private function updateIsRelevant(string $state, string $value): bool
     {
         if (isset($state, $value)) {
-            $parts = explode('.', $state);
-            $deviceId = sprintf('%s.%s.%s', $parts[0], $parts[1], $parts[2]);
-
-            if (in_array($deviceId, $this->devices) && in_array($parts[4], $this->states)) {
+            if ($this->isRelevantPhysicalDevice($state)) {
                 return true;
             }
+
+            if ($this->isRelevantVirtualDevice($state)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $state
+     *
+     * @return bool
+     */
+    private function isRelevantPhysicalDevice(string $state): bool
+    {
+        $parts = explode('.', $state);
+        $deviceId = sprintf('%s.%s.%s', $parts[0], $parts[1], $parts[2]);
+
+        if (in_array($deviceId, $this->devices) && in_array($parts[4], $this->states)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $stateId
+     *
+     * @return bool
+     */
+    private function isRelevantVirtualDevice(string $stateId): bool
+    {
+        if (in_array($stateId, $this->virtualDevices)) {
+            return true;
         }
 
         return false;
@@ -64,17 +107,24 @@ class StateChangedController extends Controller
      */
     private function init()
     {
-        foreach (config('iobroker.device_categories') as $category) {
-            foreach (array_keys(config('iobroker.devices.' . $category)) as $deviceId) {
+        foreach ($this->config['device_categories'] as $category) {
+            foreach (array_keys($this->config['devices'][$category]) as $deviceId) {
                 $this->devices[] = $deviceId;
             }
 
-            foreach (array_keys(config('iobroker.states.' . $category)) as $state) {
+            foreach (array_keys($this->config['states'][$category]) as $state) {
                 $this->states[] = $state;
             }
         }
 
+        foreach ($this->config['virtual_devices'] as $deviceId => $config) {
+            foreach (array_keys($config['states']) as $stateId) {
+                $this->virtualDevices[] = $deviceId . '.' . $stateId;
+            }
+        }
+
         $this->devices = array_unique($this->devices);
+        $this->virtualDevices = array_unique($this->virtualDevices);
         $this->states = array_unique($this->states);
     }
 }

@@ -12,3 +12,6 @@ yarn-error.log
 .env
 /config/iobroker.php
 laravel-echo-server.json
+/public/js
+/public/css
+/public/fonts

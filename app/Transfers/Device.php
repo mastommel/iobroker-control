@@ -15,6 +15,11 @@ class Device implements Jsonable, Arrayable
     /**
      * @var string
      */
+    public $systemName;
+
+    /**
+     * @var string
+     */
     public $id;
 
     /**
@@ -47,6 +52,7 @@ class Device implements Jsonable, Arrayable
 
         return [
             'name' => $this->name,
+            'system_name' => $this->systemName,
             'id' => $this->id,
             'type' => $this->type,
             'states' => $states,

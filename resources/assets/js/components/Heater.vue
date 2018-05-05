@@ -9,7 +9,7 @@
                     <div class="row no-gutters real-temperature-wrap">
                         <div class="col-sm-12">
                             <div class="temperature-radius">
-                                <span class="real-temperature">{{ data.states.ACTUAL_TEMPERATURE.value }}°</span>
+                                <span class="real-temperature">{{ data.states.ACTUAL_TEMPERATURE.value }} °</span>
                             </div>
                         </div>
                         <div class="col-sm-12">
@@ -33,7 +33,7 @@
                         </div>
                         <div class="col-sm-12">
                             <strong class="set-temperature bigger" :class="{ 'no-ack': !tempAcknowledged }">
-                                {{ data.states.SET_POINT_TEMPERATURE.value }}°
+                                {{ temperature }}
                             </strong>
                         </div>
                         <div class="col-sm-12 ">
@@ -55,21 +55,33 @@
         props: ['data'],
         computed: {
             tempAcknowledged: function () {
-                return this.data.states.SET_POINT_TEMPERATURE.ack;
+                return this.data ? this.data.states.SET_POINT_TEMPERATURE.ack: false;
+            },
+            temperature: function () {
+                const temp = this.data.states.SET_POINT_TEMPERATURE.value;
+                if (temp === 4.5 && this.data.states.SET_POINT_MODE.value === 1) {
+                    return 'OFF';
+                }
+
+                return temp + '°';
             }
         },
         methods: {
             temperatureUp: function () {
-                this.$emit('temperaturechange', {
-                    stateId: this.data.states.SET_POINT_TEMPERATURE.id,
-                    temperature: this.data.states.SET_POINT_TEMPERATURE.value + 0.5
-                });
+                if (this.data.states.SET_POINT_TEMPERATURE.value < 30.0) {
+                    this.$emit('temperaturechange', {
+                        stateId: this.data.states.SET_POINT_TEMPERATURE.id,
+                        temperature: this.data.states.SET_POINT_TEMPERATURE.value + 0.5
+                    });
+                }
             },
             temperatureDown: function () {
-                this.$emit('temperaturechange', {
-                    stateId: this.data.states.SET_POINT_TEMPERATURE.id,
-                    temperature: this.data.states.SET_POINT_TEMPERATURE.value - 0.5
-                });
+                if (this.data.states.SET_POINT_TEMPERATURE.value > 4.5) {
+                    this.$emit('temperaturechange', {
+                        stateId: this.data.states.SET_POINT_TEMPERATURE.id,
+                        temperature: this.data.states.SET_POINT_TEMPERATURE.value - 0.5
+                    });
+                }
             }
         }
     }
