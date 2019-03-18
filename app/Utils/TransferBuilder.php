@@ -10,12 +10,12 @@ class TransferBuilder implements TransferBuilderInterface
     /**
      * @var array
      */
-    private $allDevices;
+    private $allDevices = [];
 
     /**
      * @var array
      */
-    private $config;
+    private $config = [];
 
     /**
      * @param array $config
